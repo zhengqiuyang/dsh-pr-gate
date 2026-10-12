@@ -1,0 +1,31 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [20, 22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: zhengqiuyang/agent-pr-gate
+          path: sibling/agent-pr-gate
+          sparse-checkout: src
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install --no-fund --no-audit
+      - run: npm run sync -- --check
+        env:
+          APG_SRC: sibling/agent-pr-gate/src
+      - run: npm test
+        env:
+          APG_SRC: sibling/agent-pr-gate/src

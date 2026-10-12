@@ -1,0 +1,6 @@
+# Dev overlay for loading this plugin from source into a local DSH checkout:
+#
+#   pnpm dsh web --patch C:/Users/Admin/.zcode/workspace/default/dsh-pr-gate/cordis.dev.patch.yml
+- insert:
+    - id: dsh-pr-gate
+      name: 'C:/Users/Admin/.zcode/workspace/default/dsh-pr-gate/src/index.ts'

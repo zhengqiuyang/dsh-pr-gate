@@ -1,0 +1,48 @@
+{
+  "name": "dsh-pr-gate",
+  "version": "0.1.0",
+  "description": "Deterministic write gate for DeepSeek Harness: scope policy + residue scan on every file the agent writes, live in the session — the CI gate moved to the moment of the write",
+  "type": "module",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "sync": "node scripts/sync-apg-core.mjs",
+    "test": "npm run sync && npm run build && node test/run-tests.mjs"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "ai-agents",
+    "code-review",
+    "deterministic-gate"
+  ],
+  "dependencies": {
+    "yaml": "^2.6.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/schemastery": "^3.18.0",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

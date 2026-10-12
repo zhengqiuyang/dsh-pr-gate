@@ -1,0 +1,18 @@
+# Test fixture in agent-pr-gate.yaml format: the CI gate's policy reused live.
+agentSignals:
+  actors: ["agent"]
+  labels: ["agent"]
+
+policies:
+  docs-only:
+    allow: ["docs/**"]
+    deny: ["**/*.pem"]
+  default:
+    deny: ["**/*.pem"]
+
+attest:
+  testChecks: ["test"]
+
+claims:
+  verify: false
+  onMismatch: warn
