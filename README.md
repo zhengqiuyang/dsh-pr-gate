@@ -39,16 +39,12 @@ are unioned. Inline `allow`/`deny` config works without a file.
 ## Install
 
 ```sh
-dsh plugin --profile default add github:zhengqiuyang/dsh-pr-gate
+dsh plugin --profile default add dsh-pr-gate
 ```
 
-git installs build from source; authorize the build once in the profile's
-`pnpm-workspace.yaml`:
+From npm — no build step, no `allowBuilds` authorization; git installs are equally prebuilt (`lib/` ships in the repo).
 
-```yaml
-allowBuilds:
-  dsh-pr-gate: true
-```
+
 
 ## Configure
 
