@@ -1,6 +1,7 @@
 # dsh-pr-gate
 
 > **If this helps you, please give it a star** — it helps others find it. Thanks!
+
 Deterministic write gate for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) —
 **the CI gate moved to the moment of the write.**
 
