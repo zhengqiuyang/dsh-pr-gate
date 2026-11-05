@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, sep } from 'node:path';
-import { extractWriteIntent, matchPath } from '../lib/extract.js';
+import { extractWriteIntent, matchPath, toPosix } from '../lib/extract.js';
+import { resolve } from 'node:path';
 import { appendRecord, parseLine, sha256, toLine } from '../lib/ledger.js';
 import { checkScope } from '../lib/scope.js';
 import { resolvePolicy } from '../lib/index.js';
@@ -60,7 +61,23 @@ await test('absolute path under cwd becomes repo-relative', () => {
 });
 
 await test('absolute path outside cwd stays absolute', () => {
-  assert.equal(matchPath('/etc/passwd', '/repo'), '/etc/passwd');
+  const root = sep === '\\' ? 'C:/repo' : '/repo';
+  const raw = sep === '\\' ? 'D:/etc/passwd' : '/etc/passwd';
+  assert.equal(matchPath(raw, root), toPosix(resolve(root, raw)));
+});
+
+await test('T04: traversal is judged by the resolved target', () => {
+  const root = sep === '\\' ? 'C:/repo' : '/repo';
+  // src/../.github/workflows/pwn.yml lands in .github/workflows — deny 段必须命中
+  const p = matchPath('src/../.github/workflows/pwn.yml', root);
+  const v = checkScope(p, { allow: ['src/**'], deny: ['.github/workflows/**'] });
+  assert.equal(v.kind, 'denied', 'traversal into denied dir must be denied');
+  assert.ok(p.startsWith('.github/workflows/'), p);
+});
+
+await test('T04: legit src path still allowed after normalization', () => {
+  const v = checkScope(matchPath('src/a.ts', 'C:/repo'.replace('C:/repo','/repo')), { allow: ['src/**'], deny: ['.github/workflows/**'] });
+  assert.equal(v.kind, 'allowed');
 });
 
 await test('no path keys -> null (ungated)', () => {

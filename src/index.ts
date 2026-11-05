@@ -39,6 +39,8 @@ export interface Config {
   residueMode: 'warn' | 'block';
   /** JSONL ledger path; empty string disables the ledger. */
   ledgerPath: string;
+  /** Root that relative write paths resolve against (T04). */
+  workspaceRoot: string;
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -50,6 +52,8 @@ export const Config: Schema<Config> = Schema.object({
   policyFile: Schema.string().default('').description('optional agent-pr-gate.yaml to reuse the CI policy live'),
   residueMode: Schema.union(['warn', 'block']).default('warn').description('residue findings: warn or block'),
   ledgerPath: Schema.string().default('.dsh-pr-gate/session.jsonl').description('JSONL ledger path; empty disables'),
+  /** T04: root that relative write paths resolve against; default process cwd. */
+  workspaceRoot: Schema.string().default('').description('root that relative write paths resolve against; default process cwd'),
 });
 
 // Harness surface restated so the plugin typechecks standalone; identical
@@ -122,7 +126,9 @@ export function resolvePolicy(config: Config): ScopePolicy {
 export function apply(ctx: Context, config: Config) {
   const gated = new Set(config.tools);
   const policy = resolvePolicy(config);
-  const cwd = process.cwd();
+  // T04: relative write paths resolve against the configured workspace root
+  // (default: process cwd). Judged by the resolved target, not the text.
+  const cwd = config.workspaceRoot === '' ? process.cwd() : config.workspaceRoot;
   console.log(
     `[dsh-pr-gate] active: gating [${[...gated].join(', ')}], ` +
       `allow=${policy.allow?.length ?? 0} deny=${policy.deny?.length ?? 0} pattern(s), ` +

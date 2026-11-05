@@ -3,7 +3,7 @@
  * it write? Covers the first-party file tools; unknown shapes return null and
  * pass through untouched (fail-open for coverage, the scope gate stays loud).
  */
-import { isAbsolute, relative, sep } from 'node:path';
+import { isAbsolute, relative, resolve, sep } from 'node:path';
 
 export interface WriteIntent {
   /** Path as the tool expressed it, posix-normalized for glob matching. */
@@ -28,16 +28,19 @@ export function toPosix(p: string): string {
 }
 
 /**
- * A path under `root` is matched relative to it (matching how CI diffs name
- * files); paths outside `root` stay absolute. Both forms are what the glob
- * policy sees, so an absolute-path allowlist keeps working too.
+ * A path is judged by its RESOLVED target relative to `root` (T04): textual
+ * traversal like `src/../.github/workflows/x.yml` is judged by where it
+ * actually lands (.github/workflows/x.yml), not by its `src/` prefix. Paths
+ * outside `root` stay absolute so absolute-path policies keep working.
+ * Symlinks are NOT followed here (pure string/path math, no fs) — documented
+ * limitation; the host's own permissions remain the hard boundary.
  */
 export function matchPath(rawPath: string, root: string): string {
   const posix = toPosix(rawPath);
-  if (!isAbsolute(rawPath)) return posix;
-  const rel = relative(toPosix(root), posix);
+  const resolved = toPosix(resolve(root, posix));
+  const rel = relative(toPosix(root), resolved);
   if (rel && !rel.startsWith('..') && !isAbsolute(rel)) return toPosix(rel);
-  return posix;
+  return resolved;
 }
 
 export function extractWriteIntent(
