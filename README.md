@@ -94,7 +94,7 @@ owned by agent-pr-gate either way.
 
 ## Known limitations
 
-- **Path matching is glob-based on the path string.** Traversal-style paths (e.g. `src/../.github/workflows/x.yml`) are **not** normalized before matching yet — resolve paths at your integration boundary if this matters, or keep deny rules anchored to top-level directories. (Normalization is planned.)
+- **Paths are judged by their resolved target** relative to the workspace root — traversal like `src/../.github/workflows/x.yml` is normalized before matching (fixed in this release). Symlinks are NOT followed by the pure matcher (documented limitation), and there is an inherent TOCTOU window between check and write; the host's own permissions remain the hard boundary.
 - **Named file tools only.** `shell` writes, custom tools, and unknown argument shapes are not gated.
 - **Residue scan is post-write.** `residueMode: block` fails the tool result but does not roll back a file already on disk; default is `warn`.
 - **Empty policy = open.** With no allow/deny entries, every write passes (ledger still records `written`).
