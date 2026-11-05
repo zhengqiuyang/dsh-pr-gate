@@ -91,3 +91,10 @@ If dsh ships first-party deterministic write gating, or reviewer plugins
 converge on deterministic enforcement (they are all LLM-based today), this
 freezes at its last working version with a postmortem here. The engine stays
 owned by agent-pr-gate either way.
+
+## Known limitations
+
+- **Path matching is glob-based on the path string.** Traversal-style paths (e.g. `src/../.github/workflows/x.yml`) are **not** normalized before matching yet — resolve paths at your integration boundary if this matters, or keep deny rules anchored to top-level directories. (Normalization is planned.)
+- **Named file tools only.** `shell` writes, custom tools, and unknown argument shapes are not gated.
+- **Residue scan is post-write.** `residueMode: block` fails the tool result but does not roll back a file already on disk; default is `warn`.
+- **Empty policy = open.** With no allow/deny entries, every write passes (ledger still records `written`).
