@@ -44,6 +44,11 @@ async function main() {
   for (const file of FILES) {
     const src = join(sourceRoot, file);
     if (!existsSync(src)) {
+      const vendored = join(vendorRoot, file);
+      if (existsSync(vendored)) {
+        console.warn(`sync-apg-core: no sibling checkout for ${file}; using the committed copy`);
+        continue;
+      }
       console.error(`sync-apg-core: missing source ${src}`);
       console.error('Is the agent-pr-gate checkout a sibling of this plugin?');
       process.exit(1);
