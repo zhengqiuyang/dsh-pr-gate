@@ -29,3 +29,6 @@ jobs:
       - run: npm test
         env:
           APG_SRC: sibling/agent-pr-gate/src
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run coverage
