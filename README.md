@@ -1,5 +1,11 @@
 # dsh-pr-gate
 
+[![CI](https://github.com/zhengqiuyang/dsh-pr-gate/actions/workflows/ci.yml/badge.svg)](https://github.com/zhengqiuyang/dsh-pr-gate/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/dsh-pr-gate)](https://www.npmjs.com/package/dsh-pr-gate)
+[![license](https://img.shields.io/npm/l/dsh-pr-gate)](https://github.com/zhengqiuyang/dsh-pr-gate/blob/main/LICENSE)
+
+> Part of the [DSH trust layer](https://github.com/zhengqiuyang/dsh-trust-panel/blob/main/SUITE.md) — ten deterministic checks, no LLM in the trust path.
+
 > **If this helps you, please give it a star** — it helps others find it. Thanks!
 
 Deterministic write gate for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh) —
